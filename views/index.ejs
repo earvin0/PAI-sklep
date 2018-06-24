@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   </head>
   <body>
-
+  <div class="container-fluid">
+    <img style="max-height: 75px" src="images/logo.png" alt="logo"/>
+    <a href="login" class="float-right">Zaloguj się</a>
+  </div>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand text-white">Kategorie</a>
@@ -26,7 +29,7 @@
         <% } else { %>
 
         <li class="nav-item">
-          <a class="nav-link" onclick="var params = new URLSearchParams(location.search);
+          <a class="nav-link" onclick="const params = new URLSearchParams(location.search);
 params.set('category', '<%= cat %>');
 window.location.search = params.toString();"><%= cat %></a>
         </li>
@@ -38,6 +41,7 @@ window.location.search = params.toString();"><%= cat %></a>
         <input type="hidden" name="category" value="<%= category %>">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
+      <a class="nav-link text-white">Koszyk</a>
     </div>
   </nav>
 
