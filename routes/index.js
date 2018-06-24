@@ -12,8 +12,28 @@ router.get('/login', function(req, res, next) {
     res.render('login');
 });
 
+router.post('/loginUser',function(req,res,next){
+    //zaloguj i redirect!
+    res.redirect('/');
+});
+
+router.post('/registerUser',function(req,res,next){
+    //zarejestruj w serwerze i zaloguj!
+    res.redirect('/');
+});
+
 router.get('/register', function(req, res, next) {
     res.render('register');
+});
+
+router.get('/cart', function(req, res, next) {
+    //get cart
+    const data = [{name: "lama", price: "1.00"},{name: "kuna", price: "2.00"},{name: "los", price: "13.00"},{name: "jezozwierz", price: "5.00"}];
+    res.render('cart',{items: data});
+});
+
+router.post('/checkout', function (req,res,next) {
+   res.render('checkout', {orderID: "1232141421"});
 });
 
 module.exports = router;
