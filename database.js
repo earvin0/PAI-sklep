@@ -93,4 +93,18 @@ db.getProductsByCategory = (function (category) {
 	});
 });
 
+db.addToCart = (function (user_id, product_id) {
+	db.cart_ids.max('cart_id', {
+		where: {user_id: user_id}
+	}).then(cart => {
+		return cart
+	}).then(max_id => {
+		return db.cart_products.create(({
+			cart: max_id,
+			product: product_id,
+			quantity: 1
+		}))
+	});
+});
+
 module.exports = db;
