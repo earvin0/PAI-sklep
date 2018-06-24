@@ -37,13 +37,30 @@ db.getProducts = (function () {
 	});
 });
 
+db.getCategories = (function () {
+	return db.category.findAll();
+});
+
+db.getProductsByCategoryAndName = (function (category_id, name) {
+	return db.products.findAll({
+		where: {
+			$and: [
+				{category: category_id},
+				{name: {$like: '%' + name + '%'}}
+			]
+		}
+	});
+});
+
 
 db.getCartProducts = (function (cart_id) {
 	return db.cart_products.findAll({
 		include: [
 			{model: db.products, as: "productFk"},
-			{model: db.cart_ids, where: {cart_id: cart_id},
-				as: "cartFk"}],
+			{
+				model: db.cart_ids, where: {cart_id: cart_id},
+				as: "cartFk"
+			}],
 	});
 });
 
