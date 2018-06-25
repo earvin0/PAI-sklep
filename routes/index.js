@@ -1,12 +1,12 @@
 var db = require('../database');
 
 
-module.exports = function(app, passport){
+module.exports = function (app, passport) {
 
 	console.log("Passport: " + passport);
 
 	/* GET login page. */
-	app.get('/', function(req, res, next) {
+	app.get('/', function (req, res) {
 		db.getCategories().then(categories => {
 			db.getProducts().then(products => {
 				res.render('index', {category: req.query.category, categories: categories, products: products})
@@ -14,17 +14,20 @@ module.exports = function(app, passport){
 		});
 	});
 
-	app.get('/login', function(req, res, next) {
-		res.render('login', { message: req.flash('loginMessage') });
+	app.get('/login', function (req, res, next) {
+		res.render('login', {message: req.flash('loginMessage')});
 	});
 
-	app.get('/cart', function(req, res, next) {
-		//get cart
-		const data = [{name: "lama", price: "1.00"},{name: "kuna", price: "2.00"},{name: "los", price: "13.00"},{name: "jezozwierz", price: "5.00"}];
-		res.render('cart',{items: data});
+	app.get('/cart', isLoggedIn, function (req, res) {
+		console.log("Logged as: " + req.user.email);
+		const data = [{name: "lama", price: "1.00"}, {name: "kuna", price: "2.00"}, {name: "los", price: "13.00"}, {
+			name: "jezozwierz",
+			price: "5.00"
+		}];
+		res.render('cart', {items: data});
 	});
 
-	app.post('/checkout', function (req,res,next) {
+	app.post('/checkout', function (req, res) {
 		res.render('checkout', {orderID: "1232141421"});
 	});
 
@@ -32,8 +35,8 @@ module.exports = function(app, passport){
 	app.post('/login', passport.authenticate('local-login', {
 		successRedirect: '/',
 		failureRedirect: '/login',
-		failureFlash : true
-	}),  function(req, res) {
+		failureFlash: true
+	}), function (req, res) {
 		console.log("hello");
 
 		if (req.body.remember) {
@@ -45,21 +48,20 @@ module.exports = function(app, passport){
 	});
 
 	/* GET Registration Page */
-	app.get('/signup', function(req, res) {
-		// render the page and pass in any flash data if it exists
-		res.render('register.ejs', { message: req.flash('signupMessage') });
+	app.get('/signup', function (req, res) {
+		res.render('register.ejs', {message: req.flash('signupMessage')});
 	});
 
 	// process the signup form
 	app.post('/signup', passport.authenticate('local-signup', {
-		successRedirect : '/profile', // redirect to the secure profile section
-		failureRedirect : '/signup', // redirect back to the signup page if there is an error
-		failureFlash : true // allow flash messages
+		successRedirect: '/',
+		failureRedirect: '/signup',
+		failureFlash: true
 	}));
 
 
 	/* Handle Logout */
-	app.get('/signout', function(req, res) {
+	app.get('/signout', function (req, res) {
 		req.logout();
 		res.redirect('/');
 	});
