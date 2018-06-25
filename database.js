@@ -93,4 +93,10 @@ db.getProductsByCategory = (function (category) {
 	});
 });
 
+db.getUserByEmail = (function (email) {
+	return db.user.findOne({
+		where: {email: email}
+	});
+});
+
 module.exports = db;
