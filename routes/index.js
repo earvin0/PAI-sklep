@@ -1,45 +1,76 @@
-var express = require('express');
-var router = express.Router();
 var db = require('../database');
 
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    db.getCategories().then(categories => {
-        db.getProducts().then(products => {
-            res.render('index', {category: req.query.category, categories: categories, products: products})
-        })
-    });
+module.exports = function(app, passport){
 
-  // res.render('index', { category: req.query.category,categories: ["Laptopy","Laptopy2","Laptopy3"],products: [{name:"Laptop",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop2",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop3",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop2",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop3",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop2",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop3",description:"mozna sie nim wytrzec ale tani"}] });
-});
+	console.log("Passport: " + passport);
 
-router.get('/login', function(req, res, next) {
-    res.render('login');
-});
+	/* GET login page. */
+	app.get('/', function(req, res, next) {
+		db.getCategories().then(categories => {
+			db.getProducts().then(products => {
+				res.render('index', {category: req.query.category, categories: categories, products: products})
+			})
+		});
+	});
 
-router.post('/loginUser',function(req,res,next){
-    //zaloguj i redirect!
-    res.redirect('/');
-});
+	app.get('/login', function(req, res, next) {
+		res.render('login', { message: req.flash('loginMessage') });
+	});
 
-router.post('/registerUser',function(req,res,next){
-    //zarejestruj w serwerze i zaloguj!
-    res.redirect('/');
-});
+	app.get('/cart', function(req, res, next) {
+		//get cart
+		const data = [{name: "lama", price: "1.00"},{name: "kuna", price: "2.00"},{name: "los", price: "13.00"},{name: "jezozwierz", price: "5.00"}];
+		res.render('cart',{items: data});
+	});
 
-router.get('/register', function(req, res, next) {
-    res.render('register');
-});
+	app.post('/checkout', function (req,res,next) {
+		res.render('checkout', {orderID: "1232141421"});
+	});
 
-router.get('/cart', function(req, res, next) {
-    //get cart
-    const data = [{name: "lama", price: "1.00"},{name: "kuna", price: "2.00"},{name: "los", price: "13.00"},{name: "jezozwierz", price: "5.00"}];
-    res.render('cart',{items: data});
-});
+	/* Handle Login POST */
+	app.post('/login', passport.authenticate('local-login', {
+		successRedirect: '/',
+		failureRedirect: '/login',
+		failureFlash : true
+	}),  function(req, res) {
+		console.log("hello");
 
-router.post('/checkout', function (req,res,next) {
-   res.render('checkout', {orderID: "1232141421"});
-});
+		if (req.body.remember) {
+			req.session.cookie.maxAge = 1000 * 60 * 3;
+		} else {
+			req.session.cookie.expires = false;
+		}
+		res.redirect('/');
+	});
 
-module.exports = router;
+	/* GET Registration Page */
+	app.get('/signup', function(req, res) {
+		// render the page and pass in any flash data if it exists
+		res.render('register.ejs', { message: req.flash('signupMessage') });
+	});
+
+	// process the signup form
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect : '/profile', // redirect to the secure profile section
+		failureRedirect : '/signup', // redirect back to the signup page if there is an error
+		failureFlash : true // allow flash messages
+	}));
+
+
+	/* Handle Logout */
+	app.get('/signout', function(req, res) {
+		req.logout();
+		res.redirect('/');
+	});
+};
+
+function isLoggedIn(req, res, next) {
+
+	// if user is authenticated in the session, carry on
+	if (req.isAuthenticated())
+		return next();
+
+	// if they aren't redirect them to the home page
+	res.redirect('/');
+}
