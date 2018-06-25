@@ -70,6 +70,9 @@ db.getCartProductsForUser = (function (user_id) {
 	}).then(cart => {
 		return cart
 	}).then(max_id => {
+		if(isNaN(max_id)){
+			return null;
+		}
 		return db.cart_products.findAll({
 			include: [
 				{model: db.products, as: "productFk"},

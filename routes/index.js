@@ -3,10 +3,8 @@ var db = require('../database');
 
 module.exports = function (app, passport) {
 
-	console.log("Passport: " + passport);
-
 	/* GET login page. */
-	router.get('/', function (req, res, next) {
+	app.get('/', function (req, res) {
 		db.getCategories().then(categories => {
 
 			if (req.query.category !== undefined) {
@@ -32,11 +30,10 @@ module.exports = function (app, passport) {
 			}
 		});
 
-		app.get('/login', function (req, res, next) {
-			res.render('login', {message: req.flash('loginMessage')});
-		});
+	});
 
-		// res.render('index', { category: req.query.category,categories: ["Laptopy","Laptopy2","Laptopy3"],products: [{name:"Laptop",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop2",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop3",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop2",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop3",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop2",description:"mozna sie nim wytrzec ale tani"},{name:"Laptop3",description:"mozna sie nim wytrzec ale tani"}] });
+	app.get('/login', function (req, res) {
+		res.render('login', {message: req.flash('loginMessage')});
 	});
 
 	/* Handle Login POST */
@@ -74,24 +71,23 @@ module.exports = function (app, passport) {
 		res.redirect('/');
 	});
 
-	router.get('/cart', function (req, res, next) {
+	app.get('/cart', isLoggedIn, function (req, res) {
 		//get cart
-		db.getCartProductsForUser(1).then(products => {
+		db.getCartProductsForUser(req.user.user_id).then(products => {
+			console.log("Getting cartProducts");
 			res.render('cart', {items: products});
 		});
-		;
-
 
 	});
 
-	router.post('/checkout', function (req, res, next) {
+	app.post('/checkout', function (req, res, next) {
 		console.log(req.body.products);
 		console.log(req.body.quantities);
 		res.render('checkout', {orderID: "1232141421"});
 	});
 
 
-	router.post('/remove', function (req, res, next) {
+	app.post('/remove', function (req, res, next) {
 		console.log(req.body.productID);
 
 		//remove from users cart
@@ -99,14 +95,12 @@ module.exports = function (app, passport) {
 	});
 };
 
-module.exports = router;
+function isLoggedIn(req, res, next) {
 
-	function isLoggedIn(req, res, next) {
+	// if user is authenticated in the session, carry on
+	if (req.isAuthenticated())
+		return next();
 
-		// if user is authenticated in the session, carry on
-		if (req.isAuthenticated())
-			return next();
-
-		// if they aren't redirect them to the home page
-		res.redirect('/');
-	}
+	// if they aren't redirect them to the home page
+	res.redirect('/login');
+}
