@@ -1209,17 +1209,23 @@ product</ColNames>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="287" parent="236" name="user_id_UNIQUE">
+    <column id="287" parent="236" name="password">
+      <Position>5</Position>
+      <DataType>varchar(45)|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="288" parent="236" name="user_id_UNIQUE">
       <ColNames>user_id</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="288" parent="236" name="PRIMARY">
+    <key id="289" parent="236" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>user_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="289" parent="236" name="user_id_UNIQUE">
+    <key id="290" parent="236" name="user_id_UNIQUE">
       <ColNames>user_id</ColNames>
       <UnderlyingIndexName>user_id_UNIQUE</UnderlyingIndexName>
     </key>

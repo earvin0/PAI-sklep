@@ -26,18 +26,21 @@
                             <td class="col-sm-8 col-md-6">
                                     <div class="media">
                                     <div class="media-body">
-                                    <h4 class="media-heading"><a href="#">Product name</a></h4>
+                                    <h4 class="media-heading"><a href="#"><%= item.productFk.name %></a></h4>
                             </div>
                             </div></td>
                             <td class="col-sm-1 col-md-1" style="text-align: center">
                                     <input type="number" class="form-control" onblur="findTotal()" name="qty" value="1">
                                     </td>
-                                    <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="prices"><%= item.price %></strong></td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="partial"><%= item.price*3.0 %></strong><strong>$</strong></td>
+                                    <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="prices"><%= item.productFk.price %></strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="partial"><%= item.price*1.0 %></strong></td>
                         <td class="col-sm-1 col-md-1">
-                            <button type="button" class="btn btn-danger">
-                                <span class="glyphicon glyphicon-remove"></span> Remove
-                            </button></td>
+                            <form action="/remove" method="post">
+                                <input type="hidden" name="productID" value="<%= item.product %>">
+                                <input type="submit" class="btn btn-danger" value="Remove">
+                                </input>
+                            </form>
+                            </td>
                         </tr>
 
                         <% }) %>
@@ -59,7 +62,8 @@
                                 </button></td>
                             <td>
                                 <form action="/checkout" method="post">
-
+                                    <input type="hidden" value="<%= items %>" name="products">
+                                    <input type="hidden" value="1" name="quantities[]">
                                     <input type="submit" class="btn btn-success" value="Checkout">
                                 </form>
                             </td>
