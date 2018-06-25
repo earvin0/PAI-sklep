@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sklep Dawid i Oskar</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body onload="findTotal()">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Total</th>
+                            <th> </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% items.forEach(function (item) { %>
+                        <tr>
+                            <td class="col-sm-8 col-md-6">
+                                    <div class="media">
+                                    <div class="media-body">
+                                    <h4 class="media-heading"><a href="#">Product name</a></h4>
+                            </div>
+                            </div></td>
+                            <td class="col-sm-1 col-md-1" style="text-align: center">
+                                    <input type="number" class="form-control" onblur="findTotal()" name="qty" value="1">
+                                    </td>
+                                    <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="prices"><%= item.price %></strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="partial"><%= item.price*3.0 %></strong><strong>$</strong></td>
+                        <td class="col-sm-1 col-md-1">
+                            <button type="button" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove"></span> Remove
+                            </button></td>
+                        </tr>
+
+                        <% }) %>
+
+                        <tr>
+                            <td>   </td>
+                            <td>   </td>
+                            <td>   </td>
+                            <td><h3>Total</h3></td>
+                            <td class="text-right"><h3><strong>$</strong><strong id="total" onLoad="findTotal()">31.53</strong></h3></td>
+                        </tr>
+                        <tr>
+                            <td>   </td>
+                            <td>   </td>
+                            <td>   </td>
+                            <td>
+                                <button type="button" class="btn btn-default" onclick="window.location='/' ">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                                </button></td>
+                            <td>
+                                <form action="/checkout" method="post">
+
+                                    <input type="submit" class="btn btn-success" value="Checkout">
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script type="text/javascript">
+            function findTotal() {
+                var partialArr = document.getElementsByName('partial');
+                var pricesArr = document.getElementsByName('prices');
+                var qtyArr = document.getElementsByName('qty');
+                var tot=0;
+                for(var i=0;i<qtyArr.length;i++) {
+                    var qty= parseFloat(qtyArr[i].value);
+                    var price = parseFloat(pricesArr[i].innerHTML);
+                    var partial = qty*price;
+                    partialArr[i].innerHTML=partial;
+                    tot += partial;
+                }
+
+                document.getElementById('total').innerHTML = tot;
+            }
+        </script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
+
+</html>
