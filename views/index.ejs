@@ -54,7 +54,10 @@ window.location.search = params.toString();"><%= cat.name %></a>
           <h5 class="card-title"><%= product.name %></h5>
           <p class="card-text"><%= product.description %></p>
           <h5 class="card-title">$<%= product.price %></h5>
-          <a href="#" class="btn btn-primary">Add to cart</a>
+          <form action="/addToCart" method="post">
+            <input type="hidden" value="<%= product.product_id %>" name="productId">
+            <input type="submit" class="btn btn-success" value="Add to cart">
+          </form>
         </div>
       </div>
       <% if(index%4==3){ %>

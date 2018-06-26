@@ -31,13 +31,14 @@
                             </div>
                             </div></td>
                             <td class="col-sm-1 col-md-1" style="text-align: center">
-                                    <input type="number" class="form-control" onblur="findTotal()" name="qty" value="1">
+                                    <input type="number" class="form-control" onblur="findTotal()" name="qty" value="<%= item.quantity%>">
                                     </td>
                                     <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="prices"><%= item.productFk.price %></strong></td>
                         <td class="col-sm-1 col-md-1 text-center"><strong>$</strong><strong name="partial"><%= item.price*1.0 %></strong></td>
                         <td class="col-sm-1 col-md-1">
                             <form action="/remove" method="post">
-                                <input type="hidden" name="productID" value="<%= item.product %>">
+                                <input type="hidden" name="productId" value="<%= item.product %>">
+                                <input type="hidden" name="cartId" value="<%= item.cart %>">
                                 <input type="submit" class="btn btn-danger" value="Remove">
                                 </input>
                             </form>

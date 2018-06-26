@@ -41,7 +41,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // routes ======================================================================
-require('./routes/index.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./routes/index.js')(app); // load our routes and pass in our app and fully configured passport
+require('./routes/auth.js')(app, passport);
 
 // launch ======================================================================
 app.listen(port);

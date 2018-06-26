@@ -1,7 +1,7 @@
 var db = require('../database');
 
 
-module.exports = function (app, passport) {
+module.exports = function (app) {
 
 	/* GET login page. */
 	app.get('/', function (req, res) {
@@ -32,45 +32,6 @@ module.exports = function (app, passport) {
 
 	});
 
-	app.get('/login', function (req, res) {
-		res.render('login', {message: req.flash('loginMessage')});
-	});
-
-	/* Handle Login POST */
-	app.post('/login', passport.authenticate('local-login', {
-		successRedirect: '/',
-		failureRedirect: '/login',
-		failureFlash: true
-	}), function (req, res) {
-		console.log("hello");
-
-		if (req.body.remember) {
-			req.session.cookie.maxAge = 1000 * 60 * 3;
-		} else {
-			req.session.cookie.expires = false;
-		}
-		res.redirect('/');
-	});
-
-	/* GET Registration Page */
-	app.get('/signup', function (req, res) {
-		res.render('register.ejs', {message: req.flash('signupMessage')});
-	});
-
-	// process the signup form
-	app.post('/signup', passport.authenticate('local-signup', {
-		successRedirect: '/',
-		failureRedirect: '/signup',
-		failureFlash: true
-	}));
-
-
-	/* Handle Logout */
-	app.get('/signout', function (req, res) {
-		req.logout();
-		res.redirect('/');
-	});
-
 	app.get('/cart', isLoggedIn, function (req, res) {
 		//get cart
 		db.getCartProductsForUser(req.user.user_id).then(products => {
@@ -80,16 +41,26 @@ module.exports = function (app, passport) {
 
 	});
 
-	app.post('/checkout', function (req, res, next) {
+	app.post('/checkout', function (req, res) {
 		console.log(req.body.products);
 		console.log(req.body.quantities);
 		res.render('checkout', {orderID: "1232141421"});
 	});
 
+	app.post('/addToCart', isLoggedIn, function (req) {
+		console.log("Product: " + req.body.productId);
 
-	app.post('/remove', function (req, res, next) {
+		db.addProduct(req.user.user_id, req.body.productId);
+		// res.redirect("/cart")
+	});
+
+
+	app.post('/remove', function (req, res) {
 		console.log(req.body.productID);
 
+		db.getCartProduct(req.body.cartId, req.body.productId).then(cartProduct => {
+			cartProduct.destroy();
+		});
 		//remove from users cart
 		res.redirect("/cart")
 	});

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('mysql://meetpin_user:meetpin123@77.55.222.254:3306/pai');
@@ -64,23 +64,32 @@ db.getCartProducts = (function (cart_id) {
 	});
 });
 
+db.getCartProduct = (function (cart_id, product_id) {
+	return db.cart_products.findOne({
+		where: {$and: [{cart: cart_id}, {product: product_id}]}
+	});
+});
+
 db.getCartProductsForUser = (function (user_id) {
+	return db.getCartForUser(user_id).then(cart => {
+		return db.cart_products.findAll({
+			include: [
+				{model: db.products, as: "productFk"},
+				{
+					model: db.cart_ids, where: {cart_id: cart.cart_id},
+					as: "cartFk"
+				}]
+		});
+	});
+});
+
+db.getCartForUser = (function (user_id) {
 	return db.cart_ids.max('cart_id', {
 		where: {user_id: user_id}
 	}).then(cart => {
 		return cart
 	}).then(max_id => {
-		if(isNaN(max_id)){
-			return null;
-		}
-		return db.cart_products.findAll({
-			include: [
-				{model: db.products, as: "productFk"},
-				{
-					model: db.cart_ids, where: {cart_id: max_id},
-					as: "cartFk"
-				}]
-		});
+		return db.cart_ids.findById(max_id);
 	});
 });
 
@@ -101,5 +110,21 @@ db.getUserByEmail = (function (email) {
 		where: {email: email}
 	});
 });
+
+db.addProduct = (function (user_id, product_id) {
+	return db.getCartForUser(user_id).then(cart => {
+		return cart;
+	}).then(cart => {
+		return db.getCartProduct(cart.cart_id, product_id)
+	}).then(cartProduct => {
+		cartProduct.update({quantity: cartProduct.quantity + 1})
+	}).catch(err => {
+		return db.getCartForUser(user_id);
+	}).then(cart => {
+		if(cart != null)
+			db.cart_products.build({cart: cart.cart_id, product: product_id, quantity: 1}).save()
+	})
+});
+
 
 module.exports = db;

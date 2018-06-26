@@ -39,9 +39,12 @@ module.exports = function (passport) {
 				db.getUserByEmail(username).then(user => {
 					if (user != null)
 						return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
-				});
-				db.user.build({email: username, password: bcrypt.hashSync(password, null, null)}).save().then(newUser => {
-					return done(null, newUser);
+					else {
+						db.user.build({email: username, password: bcrypt.hashSync(password, null, null)}).save().then(newUser => {
+							db.cart_ids.build({user_id: newUser.user_id}).save();
+							return done(null, newUser);
+						});
+					}
 				});
 			})
 	);
@@ -55,11 +58,11 @@ module.exports = function (passport) {
 				passReqToCallback: true
 			},
 			function (req, username, password, done) {
-				console.log("DAMN");
 				db.getUserByEmail(username).then(user => {
-					if(user == null)
+					if (user == null) {
+						console.log("No user");
 						return done(null, false, req.flash('loginMessage', 'No user found.'));
-					console.log("HereUser: " + user.user_id);
+					}
 					if (!bcrypt.compareSync(password, user.password)) {
 						console.log("PASSWORD INCORRECT");
 						return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
@@ -72,17 +75,6 @@ module.exports = function (passport) {
 					console.log("ERR: " + err);
 
 				});
-				// db.user.query("SELECT * FROM users WHERE username = ?", [username], function (err, rows) {
-				// 	if (err)
-				// 		return done(err);
-				// 	if (!rows.length) {
-				// 		return done(null, false, req.flash('loginMessage', 'No user found.'));
-				// 	}
-				// 	if (!bcrypt.compareSync(password, rows[0].password))
-				// 		return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
-				//
-				// 	return done(null, rows[0]);
-				// });
 			})
 	);
 
