@@ -11,6 +11,7 @@ var port     = process.env.PORT || 3000;
 var passport = require('passport');
 var flash    = require('connect-flash');
 
+
 // configuration ===============================================================
 // connect to our database
 
@@ -39,13 +40,13 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 // routes ======================================================================
 require('./routes/index.js')(app); // load our routes and pass in our app and fully configured passport
 require('./routes/auth.js')(app, passport);
+require('./routes/api.js')(app);
 
 // launch ======================================================================
 app.listen(port);
 console.log('The magic happens on port ' + port);
 
-// module.exports = app;
+module.exports = app;

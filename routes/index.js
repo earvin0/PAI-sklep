@@ -47,11 +47,11 @@ module.exports = function (app) {
 		res.render('checkout', {orderID: "1232141421"});
 	});
 
-	app.post('/addToCart', isLoggedIn, function (req) {
+	app.post('/addToCart', isLoggedIn, function (req,res ) {
 		console.log("Product: " + req.body.productId);
 
 		db.addProduct(req.user.user_id, req.body.productId);
-		// res.redirect("/cart")
+		res.redirect("/");
 	});
 
 
@@ -62,7 +62,7 @@ module.exports = function (app) {
 			cartProduct.destroy();
 		});
 		//remove from users cart
-		res.redirect("/cart")
+		res.redirect("/cart");
 	});
 };
 
