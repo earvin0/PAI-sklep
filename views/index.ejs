@@ -1,74 +1,88 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Sklep Dawid i Oskar</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  </head>
-  <body>
-  <div class="container-fluid">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<div class="container-fluid">
     <a href="/"><img style="max-height: 75px" src="images/logo.png" alt="logo"/></a>
-    <a href="/login" class="float-right">Zaloguj się</a>
-  </div>
+    <% if (!logged) { %>
+        <a href="/login" class="float-right">Log in</a>
+    <% } else { %>
+        <a href="/signout" class="float-right">Log out</a>
+    <% }%>
+</div>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <% if (message.length > 0) { %>
+        <div class="alert alert-success"><%= message %></div>
+    <% } %>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand text-white" onclick="const params = new URLSearchParams(location.search);
             params.delete('category');window.location.search = params.toString();">Kategorie</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <% categories.forEach(function(cat) {%>
-      <ul class="navbar-nav mr-auto">
-        <% if (cat.category_id == category) {%>
-        <li class="nav-item active">
-          <a class="nav-link"><%= cat.name %> <span class="sr-only">(current)</span></a>
-        </li>
+        <% categories.forEach(function(cat) { %>
+        <ul class="navbar-nav mr-auto">
+            <% if (cat.category_id == category) { %>
+            <li class="nav-item active">
+                <a class="nav-link"><%= cat.name %> <span class="sr-only">(current)</span></a>
+            </li>
 
-        <% } else { %>
+            <% } else { %>
 
-        <li class="nav-item">
-          <a class="nav-link" onclick="const params = new URLSearchParams(location.search);
-params.set('category', '<%= cat.category_id %>');
-window.location.search = params.toString();"><%= cat.name %></a>
-        </li>
-        <% } %>
-      </ul>
-      <% }) %>
-      <form class="form-inline my-2 my-lg-0" method="get" action="/">
-        <input class="form-control mr-sm-2" type="search" name="searchQuery" placeholder="Search" aria-label="Search">
-        <input type="hidden" name="category" value="<%= category %>">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-      <a class="nav-link text-white" href="/cart">Koszyk</a>
+            <li class="nav-item">
+                <a class="nav-link" onclick="const params = new URLSearchParams(location.search);
+                        params.set('category', '<%= cat.category_id %>');
+                        window.location.search = params.toString();"><%= cat.name %></a>
+            </li>
+            <% } %>
+        </ul>
+        <% }) %>
+        <form class="form-inline my-2 my-lg-0" method="get" action="/">
+            <input class="form-control mr-sm-2" type="search" name="searchQuery" placeholder="Search" aria-label="Search">
+            <input type="hidden" name="category" value="<%= category %>">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <a class="nav-link text-white" href="/cart">Koszyk</a>
     </div>
-  </nav>
+</nav>
 
-    <div class="card-deck">
-      <% products.forEach(function(product,index){ %>
-      <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="<%= product.image_path%>" alt="Card image cap" style="max-width:300px;max-height:300px;" >
+<div class="card-deck">
+    <% products.forEach(function(product, index){ %>
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="<%= product.image_path %>" alt="Card image cap" style="max-width:300px;max-height:300px;">
         <div class="card-body">
-          <h5 class="card-title"><%= product.name %></h5>
-          <p class="card-text"><%= product.description %></p>
-          <h5 class="card-title">$<%= product.price %></h5>
-          <form action="/addToCart" method="post">
-            <input type="hidden" value="<%= product.product_id %>" name="productId">
-            <input type="submit" class="btn btn-success" value="Add to cart">
-          </form>
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="card-text"><%= product.description %></p>
+            <h5 class="card-title">$<%= product.price %></h5>
+            <form action="/addToCart" method="post">
+                <input type="hidden" value="<%= product.product_id %>" name="productId">
+                <input type="submit" class="btn btn-success" value="Add to cart">
+            </form>
         </div>
-      </div>
-      <% if(index%4==3){ %>
-        </div>
-        <div class="card-deck">
+    </div>
+    <% if(index % 4 == 3){ %>
+</div>
+<div class="card-deck">
     <% } %>
     <% }) %>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
 
 </html>

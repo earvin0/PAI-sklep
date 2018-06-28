@@ -21,6 +21,7 @@ db.sequelize = sequelize;
 db.cart_ids = require('./models/cart_ids')(sequelize, Sequelize);
 db.cart_products = require('./models/cart_products')(sequelize, Sequelize);
 db.category = require('./models/category')(sequelize, Sequelize);
+db.order = require('./models/order')(sequelize, Sequelize);
 db.products = require('./models/products')(sequelize, Sequelize);
 db.user = require('./models/user')(sequelize, Sequelize);
 
@@ -126,5 +127,13 @@ db.addProduct = (function (user_id, product_id) {
 	})
 });
 
+db.checkout = (function (user_id) {
+	return db.getCartForUser(user_id).then(cart => {
+		return cart;
+	}).then(cart => {
+		db.cart_ids.build({user_id: user_id}).save();
+		return db.order.build({cart_id: cart.cart_id}).save()
+	});
+});
 
 module.exports = db;
