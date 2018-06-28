@@ -32,15 +32,4 @@ module.exports = function (app) {
 
     });
 
-    app.post('/api/getCart', function (req, res) {
-        res.json({hello: "what are you looking for?"});
-    });
-
-    app.post('/api/addProduct', function (req, res) {
-        res.json({hello: "what are you looking for?"});
-    });
-
-    app.post('/api/removeProduct', function (req, res) {
-        res.json({hello: "what are you looking for?"});
-    });
 }
