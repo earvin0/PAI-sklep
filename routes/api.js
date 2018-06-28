@@ -2,15 +2,7 @@ var db = require('../database');
 
 module.exports = function (app) {
     app.post('/api', function (req, res) {
-        res.json({hello: "what are you looking for?"});
-    });
-
-    app.post('/api/login', function (req, res) {
-        res.json({hello: "what are you looking for?"});
-    });
-
-    app.post('/api/register', function (req, res) {
-        res.json({hello: "what are you looking for?"});
+        res.json({hello: "available endpoints: /getCategories and /getProducts?name=xxx&category=1"});
     });
 
     app.get('/api/getCategories', function (req, res) {
